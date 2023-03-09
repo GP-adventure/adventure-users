@@ -62,6 +62,15 @@ export interface LoginResponse {
   error?: ErrorResponse | undefined;
 }
 
+export interface LogoutResult {
+  token: string;
+}
+
+export interface LogoutResponse {
+  data?: LogoutResult | undefined;
+  error?: ErrorResponse | undefined;
+}
+
 export interface ConfirmRequest {
   token: string;
 }
@@ -72,6 +81,10 @@ export interface ConfirmResponse {
 
 export interface ResendResponse {
   error?: ErrorResponse | undefined;
+}
+
+export interface WhoAmIRequest {
+  token: string;
 }
 
 export interface WhoAmIResult {
@@ -95,11 +108,13 @@ export interface AuthServiceClient {
 
   login(request: LoginRequest): Observable<LoginResponse>;
 
+  logout(request: Empty): Observable<LogoutResponse>;
+
   confirm(request: ConfirmRequest): Observable<ConfirmResponse>;
 
   resend(request: Empty): Observable<ResendResponse>;
 
-  whoAmI(request: Empty): Observable<WhoAmIResponse>;
+  whoAmI(request: WhoAmIRequest): Observable<WhoAmIResponse>;
 }
 
 export interface AuthServiceController {
@@ -107,16 +122,18 @@ export interface AuthServiceController {
 
   login(request: LoginRequest): Promise<LoginResponse> | Observable<LoginResponse> | LoginResponse;
 
+  logout(request: Empty): Promise<LogoutResponse> | Observable<LogoutResponse> | LogoutResponse;
+
   confirm(request: ConfirmRequest): Promise<ConfirmResponse> | Observable<ConfirmResponse> | ConfirmResponse;
 
   resend(request: Empty): Promise<ResendResponse> | Observable<ResendResponse> | ResendResponse;
 
-  whoAmI(request: Empty): Promise<WhoAmIResponse> | Observable<WhoAmIResponse> | WhoAmIResponse;
+  whoAmI(request: WhoAmIRequest): Promise<WhoAmIResponse> | Observable<WhoAmIResponse> | WhoAmIResponse;
 }
 
 export function AuthServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["register", "login", "confirm", "resend", "whoAmI"];
+    const grpcMethods: string[] = ["register", "login", "logout", "confirm", "resend", "whoAmI"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("AuthService", method)(constructor.prototype[method], method, descriptor);

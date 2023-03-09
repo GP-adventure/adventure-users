@@ -1,6 +1,6 @@
 import { ClassSerializerInterceptor } from '@nestjs/common';
 import { Body, Controller, Post, Req, UseInterceptors } from '@nestjs/common/decorators';
-import RequestWithUser from 'src/auth/requestWithUser';
+import RequestWithUser from 'src/features/auth/requestWithUser';
 import { EmailConfirmationDto } from './dto/emailConfirmation.dto';
 import { EmailConfirmationService } from './email-confirmation.service';
 import { GrpcMethod } from '@nestjs/microservices';
