@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { dotenvLoader, TypedConfigModule } from 'nest-typed-config';
-import { JWTConfig, RootConfig } from './config/configuration';
+import { JWTConfig, RootConfig } from './configuration';
 
 @Global()
 @Module({
@@ -16,10 +16,7 @@ import { JWTConfig, RootConfig } from './config/configuration';
         config.db.port = parseInt(config.db.port, 10);
         config.general.port = parseInt(config.general.port, 10);
         config.jwt.expirationTime = parseInt(config.jwt.expirationTime, 10);
-        config.jwt.verifitationExpirationTime = parseInt(
-          config.jwt.verifitationExpirationTime,
-          10,
-        );
+        config.jwt.verifitationExpirationTime = parseInt(config.jwt.verifitationExpirationTime, 10);
         return config;
       },
     }),

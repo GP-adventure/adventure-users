@@ -1,8 +1,17 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Users from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
+import { errorGuard } from 'src/utils/createGuard';
+import { PostgresErrorCode } from 'src/database/postgresErrorCodes.enum';
 
 @Injectable()
 export class UsersService {
@@ -48,6 +57,9 @@ export class UsersService {
       await this.usersRepository.save(newUser);
       return newUser;
     } catch (error) {
+      if (errorGuard(error) && error.code === PostgresErrorCode.UniqueViolation) {
+        throw new BadRequestException('User with that email already exists');
+      }
       throw new HttpException('Unexpected error occured', HttpStatus.NOT_FOUND);
     }
   }

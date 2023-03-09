@@ -1,7 +1,9 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -50,19 +52,12 @@ export class AuthService {
   }
 
   public async register(registrationData: RegisterDto): Promise<Users> {
-    try {
-      const hashedPassword = await bcrypt.hash(registrationData.password, 10);
-      const createdUser = await this.userService.create({
-        ...registrationData,
-        password: hashedPassword,
-      });
-      return createdUser;
-    } catch (error) {
-      if (errorGuard(error) && error.code === PostgresErrorCode.UniqueViolation) {
-        throw new HttpException('User with that email already exists', HttpStatus.BAD_REQUEST);
-      }
-      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    const hashedPassword = await bcrypt.hash(registrationData.password, 10);
+    const createdUser = await this.userService.create({
+      ...registrationData,
+      password: hashedPassword,
+    });
+    return createdUser;
   }
 
   public getCookieForLogOut(): string {

@@ -1,27 +1,18 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { AuthModule } from './features/auth/auth.module';
 import { DatabaseModule } from './database/database.module';
 import { CoreModules } from './coreModules.module';
-import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module';
+import { EmailConfirmationModule } from './features/email-confirmation/email-confirmation.module';
+import * as cookieParser from 'cookie-parser';
+import { UsersModule } from './features/users/users.module';
 
 @Module({
-  imports: [
-    CoreModules,
-    DatabaseModule,
-    AuthModule,
-    UsersModule,
-    EmailConfirmationModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [CoreModules, DatabaseModule, AuthModule, EmailConfirmationModule, UsersModule],
+  controllers: [],
+  providers: [],
 })
-export class AppModule {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  configure(_app: NestExpressApplication): void {
-    // your app configuration goes heree
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(cookieParser()).forRoutes('*');
   }
 }

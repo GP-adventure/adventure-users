@@ -5,7 +5,7 @@ import { Response } from 'express';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost): GenericResponse {
+  async catch(exception: HttpException, host: ArgumentsHost): Promise<GenericResponse> {
     const ctx: HttpArgumentsHost = host.switchToHttp();
     const res: Response = ctx.getResponse<Response>();
     const status: HttpStatus = exception.getStatus();
@@ -20,12 +20,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
       };
     }
 
-    res.status(status).json({
+    return {
       error: {
         statusCode: status,
         message: exception.message,
         error: exception.name,
       },
-    });
+    };
   }
 }
